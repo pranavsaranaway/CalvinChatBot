@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calvin</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #2b2b2b;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1{
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        #chatbox {
+            width: 80%;
+            max-width: 600px;
+            background: #000000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            border: 2px solid #00ff00;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #00ff00;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user {
+            text-align: right;
+            color: #00ff00;
+        }
+        .ai {
+            text-align: left;
+            color: #00ff00;
+        }
+        #input {
+            display: flex;
+        }
+        #input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #input button {
+            padding: 10px;
+            border: 1px solid #00ff00;
+            background: #000000;
+            color: #00ff00;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #input button:hover {
+            background: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <h1>TALK TO CALVIN</h1>
+    <div id="chatbox">
+        <div id="messages"></div>
+        <div id="input">
+            <input type="text" id="userInput" placeholder="Type your message here...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script>
+        let context = "";
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === "") return;
+
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user';
+            userMessage.textContent = `You: ${userInput}`;
+            document.getElementById('messages').appendChild(userMessage);
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ context: context, question: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'message ai';
+                aiMessage.textContent = `Calvin: ${data.response}`;
+                document.getElementById('messages').appendChild(aiMessage);
+                context += `\nYou: ${userInput}\nAI: ${data.response}`;
+                document.getElementById('userInput').value = '';
+            });
+        }
+
+        document.getElementById('userInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

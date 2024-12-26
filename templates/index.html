@@ -17,7 +17,7 @@
             justify-content: center;
             height: 100vh;
         }
-        h1{
+        h1 {
             color: #00ff00;
             margin-bottom: 20px;
         }
@@ -77,7 +77,7 @@
     </style>
 </head>
 <body>
-    <h1>TALK TO CALVIN</h1>
+    <h1>Calvin</h1>
     <div id="chatbox">
         <div id="messages"></div>
         <div id="input">
@@ -110,9 +110,15 @@
                 aiMessage.className = 'message ai';
                 aiMessage.textContent = `Calvin: ${data.response}`;
                 document.getElementById('messages').appendChild(aiMessage);
-                context += `\nYou: ${userInput}\nAI: ${data.response}`;
+                context += `\nYou: ${userInput}\nCalvin: ${data.response}`;
                 document.getElementById('userInput').value = '';
+                scrollToBottom();
             });
+        }
+
+        function scrollToBottom() {
+            const messages = document.getElementById('messages');
+            messages.scrollTop = messages.scrollHeight;
         }
 
         document.getElementById('userInput').addEventListener('keydown', function(event) {
